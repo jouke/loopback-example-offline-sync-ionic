@@ -42,13 +42,17 @@
         </button>
       </ion-header-bar>
       <ion-content>
-        <ion-list show-delete="showDeleteButtons">
+        <ion-list show-delete="showDeleteButtons" can-swipe="canSwipe">
           <ion-item ng-repeat="todo in todos" ng-class="{completed: todo.completed}">
             <ion-delete-button class="ion-minus-circled"
                                ng-click="removeTodo(todo)">
             </ion-delete-button>
-            <input class="toggle" type="checkbox" ng-model="todo.completed" ng-change="toggleTodoCompleted(todo)">
+            <input class="toggle" type="checkbox" ng-model="todo.completed" ng-change="saveTodoCompleted(todo)">
             <label>{{todo.title}}</label>
+            <ion-option-button class="button-assertive"
+                               ng-click="editTodo(todo)">
+              Edit
+            </ion-option-button>
           </ion-item>
         </ion-list>
       </ion-content>
@@ -56,24 +60,22 @@
       <script id="new-todo.html" type="text/ng-template">
 
         <div class="modal">
-
           <!-- Modal header bar -->
           <ion-header-bar class="bar-secondary">
-            <h1 class="title">New Todo</h1>
+            <h1 class="title">{{editedTodo.id ? 'Edit' : 'New'}} Todo</h1>
             <button class="button button-clear button-positive" ng-click="closeNewTodo()">Cancel</button>
           </ion-header-bar>
 
           <!-- Modal content area -->
           <ion-content>
-
-            <form ng-submit="createTodo(todo)">
+            <form ng-submit="editedTodo.id ? doneEditing(editedTodo) : createTodo(editedTodo)">
               <div class="list">
                 <label class="item item-input">
-                  <input type="text" placeholder="What do you need to do?" ng-model="todo.title">
+                  <input type="text" placeholder="What do you need to do?" ng-model="editedTodo.title">
                 </label>
               </div>
               <div class="padding">
-                <button type="submit" class="button button-block button-positive">Create Todo</button>
+                <button type="submit" class="button button-block button-positive">Save</button>
               </div>
             </form>
 

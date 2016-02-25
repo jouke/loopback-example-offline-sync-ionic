@@ -1,17 +1,12 @@
 angular.module('todo')
-  .controller('TodoCtrl', function ($scope, $ionicModal, $stateParams, $filter, Todo,
-                                            $location, sync, network,
-                                            getReadableModelId) {
+  .controller('TodoCtrl', function ($scope, $ionicModal, $stateParams, Todo, sync, network, getReadableModelId) {
     $scope.todos = [];
-
     $scope.editedTodo = null;
     $scope.showDeleteButtons = false;
+    $scope.canSwipe = true;
 
     // sync the initial data
     sync(onChange);
-
-    // the location service
-    $scope.loc = $location;
 
     function onChange() {
       Todo.stats(function(err, stats) {
@@ -28,7 +23,6 @@ angular.module('todo')
     }
 
     function error(err) {
-      //TODO error handling
       console.error(err);
     }
 
@@ -44,21 +38,20 @@ angular.module('todo')
     Todo.observe('after delete', function(ctx, next) {
       next();
       onChange();
+      sync();
+    });
+    Todo.observe('after create', function(ctx, next) {
+      next();
+      sync();
     });
 
-    // Monitor the current route for changes and adjust the filter accordingly.
-    $scope.$on('$stateChangeSuccess', function () {
-      var status = $scope.status = $stateParams.status || '';
-      $scope.statusFilter = (status === 'active') ?
-      { completed: false } : (status === 'completed') ?
-      { completed: true } : {};
-    });
 
     $scope.editTodo = function (todo) {
       $scope.editedTodo = todo;
+      $scope.todoModal.show();
     };
 
-    $scope.toggleTodoCompleted = function(todo) {
+    $scope.saveTodoCompleted = function(todo) {
       todo.save();
     };
 
@@ -71,43 +64,51 @@ angular.module('todo')
       } else {
         todo.save();
       }
+      $scope.todoModal.hide();
     };
 
     $scope.removeTodo = function (todo) {
       todo.remove(errorCallback);
-      sync();
     };
 
-    $scope.clearCompletedTodos = function () {
-      Todo.destroyAll({completed: true}, onChange);
-    };
-
-    $scope.markAll = function (completed) {
-      Todo.find(function(err, todos) {
-        if(err) return errorCallback(err);
-        todos.forEach(function(todo) {
-          todo.completed = completed;
-          todo.save(errorCallback);
-        });
-      });
-    };
+    // from the Angular demo app, not implemented (yet)
+    //// Monitor the current route for changes and adjust the filter accordingly.
+    //$scope.$on('$stateChangeSuccess', function () {
+    //  var status = $scope.status = $stateParams.status || '';
+    //  $scope.statusFilter = (status === 'active') ?
+    //  { completed: false } : (status === 'completed') ?
+    //  { completed: true } : {};
+    //});
+    //$scope.clearCompletedTodos = function () {
+    //  Todo.destroyAll({completed: true}, onChange);
+    //};
+    //
+    //$scope.markAll = function (completed) {
+    //  Todo.find(function(err, todos) {
+    //    if(err) return errorCallback(err);
+    //    todos.forEach(function(todo) {
+    //      todo.completed = completed;
+    //      todo.save(errorCallback);
+    //    });
+    //  });
+    //};
+    //$scope.connected = function() {
+    //  return network.isConnected;
+    //};
+    //
+    //$scope.connect = function() {
+    //  network.isConnected = true;
+    //  sync();
+    //};
+    //
+    //$scope.disconnect = function() {
+    //  network.isConnected = false;
+    //};
 
     $scope.sync = function() {
       sync();
     };
 
-    $scope.connected = function() {
-      return network.isConnected;
-    };
-
-    $scope.connect = function() {
-      network.isConnected = true;
-      sync();
-    };
-
-    $scope.disconnect = function() {
-      network.isConnected = false;
-    };
 
     Todo.on('conflicts', function(conflicts) {
       $scope.localConflicts = conflicts;
@@ -171,6 +172,7 @@ angular.module('todo')
     };
 
     $scope.newTodo = function() {
+      $scope.editedTodo = {title: ''};
       $scope.todoModal.show();
     };
 
