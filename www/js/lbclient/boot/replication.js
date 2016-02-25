@@ -22,25 +22,22 @@ module.exports = function(client) {
       return this._isConnected;
     },
     set isConnected(value) {
-      this._isConnected = value;
+      return this._isConnected = value;
     }
   };
 
   // setup model replication
   var since = { push: -1, pull: -1 };
   function sync(cb) {
-    console.log('syncing')
     LocalTodo.replicate(
       since.push,
       RemoteTodo,
       function pushed(err, conflicts, cps) {
-        console.log(err, conflicts, cps);
         since.push = cps;
         RemoteTodo.replicate(
           since.pull,
           LocalTodo,
           function pulled(err, conflicts, cps) {
-            console.log(err, conflicts, cps);
             since.pull = cps;
             if (cb) cb();
           });
@@ -49,11 +46,8 @@ module.exports = function(client) {
 
   // sync local changes if connected
   LocalTodo.on('after save', function(ctx, next) {
-    console.log('after save');
     next();
-    console.log('syncing');
     sync();
-    console.log('synced');
   });
   LocalTodo.on('after delete', function(ctx, next) {
     next();

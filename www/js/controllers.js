@@ -5,8 +5,17 @@ angular.module('todo')
     $scope.showDeleteButtons = false;
     $scope.canSwipe = true;
 
+    $scope.sync = function(done) {
+      if (network.isConnected) {
+        sync(done);
+      }
+      else {
+        console.warn('Cowardly refusing to sync since we\'re not connected')
+      }
+    }
+
     // sync the initial data
-    sync(onChange);
+    $scope.sync(onChange);
 
     function onChange() {
       Todo.stats(function(err, stats) {
@@ -33,16 +42,16 @@ angular.module('todo')
     Todo.observe('after save', function(ctx, next) {
       next();
       onChange();
-      sync();
+      $scope.sync();
     });
     Todo.observe('after delete', function(ctx, next) {
       next();
       onChange();
-      sync();
+      $scope.sync();
     });
     Todo.observe('after create', function(ctx, next) {
       next();
-      sync();
+      $scope.sync();
     });
 
 
@@ -104,13 +113,16 @@ angular.module('todo')
     //$scope.disconnect = function() {
     //  network.isConnected = false;
     //};
+    $scope.isConnected = network.isConnected;
 
-    $scope.sync = function() {
-      sync();
-    };
-
+    $scope.toggleConnect = function() {
+      network.isConnected = !network.isConnected;
+      $scope.isConnected = network.isConnected;
+      $scope.isConnected && sync();
+    }
 
     Todo.on('conflicts', function(conflicts) {
+      console.log(conflicts);
       $scope.localConflicts = conflicts;
 
       conflicts.forEach(function(conflict) {
@@ -148,7 +160,7 @@ angular.module('todo')
     function refreshConflicts() {
       $scope.localConflicts = [];
       $scope.$apply();
-      sync();
+      $scope.sync();
     }
 
     // Create and load the Modal

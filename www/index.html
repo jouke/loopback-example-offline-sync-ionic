@@ -37,6 +37,9 @@
         <button class="button button-icon" ng-click="showDeleteButtons = !showDeleteButtons">
           <i class="icon ion-minus-circled"></i>
         </button>
+        <button class="button button-icon" ng-click="toggleConnect()">
+          <i class="icon" ng-class="{'ion-flash': isConnected, 'ion-flash-off': !isConnected}"></i>
+        </button>
         <button class="button button-icon" ng-click="sync()">
           <i class="icon ion-arrow-swap"></i>
         </button>
