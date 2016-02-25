@@ -1,0 +1,64 @@
+$light:                           #fff !default;
+$stable:                          #f8f8f8 !default;
+$positive:                        #387ef5 !default;
+$calm:                            #11c1f3 !default;
+$balanced:                        #33cd5f !default;
+$energized:                       #ffc900 !default;
+$assertive:                       #ef473a !default;
+$royal:                           #886aea !default;
+$dark:                            #444 !default;
+
+.completed {
+  color: #a9a9a9;
+  text-decoration: line-through;
+}
+
+.toggle {
+  text-align: center;
+  width: 40px;
+  /* auto, since non-WebKit browsers doesn't support input styling */
+  height: auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+  /* Mobile Safari */
+  border: none;
+  -webkit-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+}
+
+.toggle:after {
+  content: '✔';
+  /* 40 + a couple of pixels visual adjustment */
+  line-height: 40px;
+  font-size: 20px;
+  color: #d9d9d9;
+  text-shadow: 0 -1px 0 #bfbfbf;
+}
+
+.toggle:checked:after {
+  color: #85ada7;
+  text-shadow: 0 1px 0 #669991;
+  bottom: 1px;
+  position: relative;
+}
+
+label {
+  font-size:24px;
+  white-space: pre;
+  word-break: break-word;
+  padding: 15px 60px 15px 15px;
+  margin-left: 45px;
+  display: block;
+  line-height: 1.2;
+  -webkit-transition: color 0.4s;
+  transition: color 0.4s;
+}
+
+.completed label {
+  color: #a9a9a9;
+  text-decoration: line-through;
+}
