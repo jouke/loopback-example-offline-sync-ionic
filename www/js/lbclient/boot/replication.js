@@ -45,11 +45,12 @@ module.exports = function(client) {
   }
 
   // sync local changes if connected
-  LocalTodo.on('after save', function(ctx, next) {
+  LocalTodo.observe('after save', function(ctx, next) {
     next();
+    console.log('sync after save');
     sync();
   });
-  LocalTodo.on('after delete', function(ctx, next) {
+  LocalTodo.observe('after delete', function(ctx, next) {
     next();
     sync();
   });
