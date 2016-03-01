@@ -1,5 +1,5 @@
 angular.module('todo')
-  .controller('TodoCtrl', function ($scope, $ionicModal, $stateParams, Todo, sync, network, getReadableModelId) {
+  .controller('TodoCtrl', function ($scope, $ionicModal, $ionicPlatform, $stateParams, Todo, sync, network, getReadableModelId) {
     $scope.todos = [];
     $scope.editedTodo = null;
     $scope.showDeleteButtons = false;
@@ -15,7 +15,9 @@ angular.module('todo')
     }
 
     // sync the initial data
-    $scope.sync(onChange);
+    document.addEventListener('connector-cordova-sqlite-ready', function() {
+      $scope.sync(onChange);
+    }, false);
 
     function onChange() {
       Todo.stats(function(err, stats) {

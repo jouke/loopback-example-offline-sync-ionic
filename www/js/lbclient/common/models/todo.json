@@ -1,7 +1,7 @@
 {
   "name": "Todo",
   "base": "PersistedModel",
-  "strict": "throw",
+  "strict": "validate",
   "persisteUndefinedAsNull": true,
   "trackChanges": true,
   "properties": {
